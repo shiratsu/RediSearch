@@ -26,7 +26,8 @@ def testCompression(env):
 		env.expect('ft.search', 'idx', ('@n:[%s %s]' % (value, value))).equal([1L, str(i), ['n', str(value)]])
   
 def testSanity(env):
-	env.skipOnCluster()
+	#TODO: enable except for cluster
+	env.skip()
 	repeat = 100000
 	conn = getConnectionByEnv(env)
 	env.cmd('ft.create', 'idx', 'SCHEMA', 'n', 'numeric')
