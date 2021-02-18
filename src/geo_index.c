@@ -104,7 +104,7 @@ done:
 }
 
 IndexIterator *NewGeoRangeIterator(RedisSearchCtx *ctx, const GeoFilter *gf) {
-  GeoHashRange ranges[GEO_RANGE_COUNT] = {{0}};
+  GeoHashRange *ranges = rm_calloc(GEO_RANGE_COUNT, sizeof(*ranges));
   double radius_meter = gf->radius * extractUnitFactor(gf->unitType);
   calcRanges(gf->lon, gf->lat, radius_meter, ranges);
 
@@ -123,6 +123,7 @@ IndexIterator *NewGeoRangeIterator(RedisSearchCtx *ctx, const GeoFilter *gf) {
       }
     }
   }
+  rm_free(ranges);
 
   if (itersCount == 0) {
     rm_free(iters);

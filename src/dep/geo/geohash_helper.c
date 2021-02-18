@@ -102,10 +102,13 @@ int geohashBoundingBox(double longitude, double latitude, double radius_meters,
                        double *bounds) {
     if (!bounds) return 0;
 
-    bounds[0] = longitude - rad_deg(radius_meters/EARTH_RADIUS_IN_METERS/cos(deg_rad(latitude)));
-    bounds[2] = longitude + rad_deg(radius_meters/EARTH_RADIUS_IN_METERS/cos(deg_rad(latitude)));
-    bounds[1] = latitude - rad_deg(radius_meters/EARTH_RADIUS_IN_METERS);
-    bounds[3] = latitude + rad_deg(radius_meters/EARTH_RADIUS_IN_METERS);
+    const double lat_delta = rad_deg(radius_meters / EARTH_RADIUS_IN_METERS);
+    const double long_delta = rad_deg(radius_meters / EARTH_RADIUS_IN_METERS / cos(deg_rad(latitude + lat_delta)));
+    
+    bounds[0] = longitude - lat_delta;
+    bounds[2] = longitude + lat_delta;
+    bounds[1] = latitude - long_delta;
+    bounds[3] = latitude + long_delta;
     return 1;
 }
 
@@ -121,7 +124,7 @@ GeoHashRadius geohashGetAreasByRadius(double longitude, double latitude, double 
     double bounds[4];
     int steps;
 
-    geohashBoundingBox(longitude, latitude, radius_meters, bounds);
+    geohashBoundingBox(longitude, latitude, radius_meters, (double *)bounds);
     min_lon = bounds[0];
     min_lat = bounds[1];
     max_lon = bounds[2];
